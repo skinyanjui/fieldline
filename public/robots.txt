@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# AI Answer Engines & Discovery Manifests
+# Structured directory context available at /llms.txt and /lamd.txt
+Allow: /llms.txt
+Allow: /lamd.txt

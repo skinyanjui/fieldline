@@ -1,0 +1,86 @@
+# Fieldline — Black Outdoor Clubs Directory & Community Network
+
+> Fieldline is an open directory and community social network mapping 42+ Black-led outdoor recreation clubs, adventure collectives, environmental nonprofits, Black-owned campground indexes, and land stewardship organizations across the United States and the diaspora.
+
+## Overview & Capabilities
+- **Searchable Club Directory**: Filter 42+ verified and community-contributed organizations by name, city/state, region, outdoor discipline, or organization type, and export filtered lists as CSV.
+- **Field Feed (Social Network)**: Community dispatches for trail conditions, trip recaps, carpool coordination, loaner gear shares, and conservation volunteer calls.
+- **Upcoming Group Outings**: Regional hikes, dawn surf patrols, birding walks, crag days, and gravel rides with live RSVP tracking and `.ics` calendar downloads.
+- **Members & Social Graph**: Public member profiles, outdoor discipline matching, and member-to-member following.
+- **Community Submissions**: Verified members can submit new local chapters and adjacent outdoor equity organizations directly to the directory.
+
+## Key Pages & Endpoints
+- `/` — Main application (Directory Explorer, Field Feed, Outings Calendar, Members Roster, Submit Club)
+- `/llms.txt` — Machine-readable AI context and organization catalog
+- `/lamd.txt` — Alias of AI directory context for Answer Engine Optimization (AEO)
+- `/robots.txt` — Search engine and AI crawler permissions
+
+## Directory Catalog by Discipline
+
+### Hiking & Camping
+- **Outdoor Afro** (Oakland, CA · 80+ U.S. Chapters · Est. 2009): National network founded by Rue Mapp reconnecting Black communities to land, water, and wildlife through hikes, paddling, swim education, and conservation advocacy. https://outdoorafro.org
+- **Black Girls Trekkin'** (Los Angeles, CA · Est. 2017): Southern California hiking, backpacking, and wilderness education collective for Black women and girls. https://blackgirlstrekkin.com
+- **Black People Who Hike** (St. Louis, MO · Midwest & National · Est. 2019): Guided hikes, kayaking, climbing, and wellness retreats founded by Debbie Njai. https://blackpeoplewhohike.com
+- **Camp Yoshi** (Portland, OR · National Expeditions · Est. 2020): All-inclusive backcountry camping, overlanding, and open-fire culinary expeditions. https://campyoshi.com
+- **Black Folks Camp Too** (Brevard, NC · National · Est. 2019): Camping and RV inclusion initiative founded by Earl B. Hunter Jr., home of the Unity Blaze symbol. https://blackfolkscamptoo.com
+- **Blackpackers** (Colorado Springs, CO · Est. 2019): Nonprofit removing economic barriers with fully covered gear and guided trips for backpacking, skiing, climbing, and rafting. https://coblackpackers.com
+- **Vibe Tribe Adventures** (Denver, CO · Est. 2020): Mountain West collective hosting snowshoeing, SUP, kayaking, and outdoor leader accelerators. https://vibetribeadventures.org
+- **Black Outside, Inc.** (San Antonio, TX · Est. 2018): Texas nonprofit reconnecting Black youth and families to the outdoors through Camp Founder Girls and state park leadership camps. https://blackoutside.org
+- **The Outdoor Journal Tour** (Atlanta, GA · National · Est. 2015): Mindfulness, nature journaling, and the #WeHikeToHeal community hiking movement. https://www.outdoorjournaltour.com
+- **Wild Diversity** (Portland, OR · Est. 2018): BIPOC and LGBTQ2S+ outdoor education nonprofit featuring a free Community Gear Library and sliding-scale trips. https://wilddiversity.com
+
+### Climbing & Snow
+- **National Brotherhood of Skiers (NBS)** (Chicago, IL · 50+ Member Clubs · Est. 1973): Largest Black winter sports organization in the U.S., hosting annual Black Summits and youth Olympic scholarships. https://nbs.org
+- **Brothers of Climbing (BOC)** (Brooklyn, NY · National · Est. 2010): Rock climbing crew expanding representation in indoor bouldering, outdoor crags, and mountaineering; co-host of Color the Crag. https://boccrew.com
+- **Brown Girls Climb** (National · 25+ Meetups · Est. 2016): Elevating women and non-binary climbers of color through gym meetups, mentorship, and AMGA leadership pathways. https://browngirlsclimb.com
+- **EDGE Outdoors** (Seattle, WA · PNW · Est. 2020): Founded by Annette Diggs to build equity, clinics, and PSIA/AASI instructor pipelines for women of color in skiing and snowboarding. https://edgeoutdoors.org
+- **Climbers of Color** (Seattle, WA · Cascades · Est. 2016): Technical mountaineering, glacier travel, ice climbing, and alpine leadership mentorship. https://climbersofcolor.org
+- **Full Circle Everest** (Colorado · Global · Est. 2021): Historic first all-Black Mount Everest summit expedition team (2022) and high-altitude representation nonprofit. https://www.fullcircleexpeditions.com
+
+### Water, Surf & Dive
+- **National Association of Black Scuba Divers (NABS)** (Washington, D.C. · 50+ Global Clubs · Est. 1991): World's largest network of Black scuba divers advancing underwater safety, youth aquatics, and marine conservation. https://nabsdivers.org
+- **Diving with a Purpose (DWP)** (U.S. & Caribbean · Est. 2003): Underwater archaeology and ocean conservation training divers to document historic shipwrecks and coral reefs. https://divingwithapurpose.org
+- **Laru Beya Collective** (Rockaway Beach, NY · Est. 2018): Nonprofit providing free surf instruction, ocean water safety, and coastal stewardship in New York City. https://larubeyacollective.com
+- **Black Surfers Collective** (Los Angeles, CA · Est. 2012): Ocean literacy and surf community rooted in the history of Inkwell Beach in Santa Monica. https://blacksurferscollective.org
+- **Universal Sailing Club** (Atlanta, GA · Southeast & National · Est. 1988): Premier African American sailing club hosting ASA certification pathways, lake regattas, and international flotillas. https://universalsailingclub.org
+- **Brown Folks Fishing** (National · Est. 2018): Inclusive angler community, BIPOC fishing guide directory, and clean-water conservation advocacy. https://brownfolksfishing.com
+- **Black in Marine Science (BIMS)** (Spokane, WA · Global · Est. 2020): Founded by Dr. Tiara Moore to celebrate Black marine scientists, ocean literacy, and coastal conservation fieldwork. https://www.blackinmarinescience.org
+- **Minorities in Shark Sciences (MISS)** (Sarasota, FL · Global · Est. 2020): Fully funded shark research workshops, marine fellowships, and youth science camps for women and gender minorities of color. https://www.misselasmo.org
+
+### Cycling & Running
+- **Black Girls Do Bike** (Pittsburgh, PA · 100+ U.S. Chapters · Est. 2013): Nationwide sisterhood of women of color cyclists hosting no-drop rides and bike maintenance clinics. https://blackgirlsdobike.org
+- **Major Taylor Cycling Clubs** (Los Angeles, Chicago, Twin Cities & 30+ Chapters · Est. 1979): Group road cycling, century training, and safety advocacy honoring world champion Marshall "Major" Taylor. https://majortaylorassociation.org
+- **GirlTrek** (Washington, D.C. · 1M+ Walkers · Est. 2010): Public health movement mobilizing Black women for daily neighborhood walks and historic freedom-trail pilgrimages. https://girltrek.org
+- **Black Trail Runners** (UK & U.S. · Est. 2020): Expanding Black participation, navigation skills, and representation in trail running and ultramarathons. https://blacktrailrunners.run
+- **All Mountain Brothers** (National · Est. 2018): Mountain biking collective hosting singletrack group rides, trail-building days, and bike park sessions. https://allmountainbrothers.com
+- **Black Girls RUN!** (Atlanta, GA · 70+ Chapters · Est. 2009): National running community founded by Toni Carey and Ashley Hicks with weekly all-pace city runs. https://blackgirlsrun.com
+- **Black Men Run** (Atlanta, GA · 50+ Chapters · Est. 2013): Brotherhood promoting health and wellness through weekly group runs in 50+ cities. https://blackmenrun.com
+
+### Birding, Conservation & Coalitions
+- **BlackAFinSTEM (Black Birders Week)** (National · Est. 2020): Collective of Black naturalists and wildlife biologists organizing Black Birders Week and guided nature walks. https://blackafinstem.com
+- **Backyard Basecamp** (Baltimore, MD · Est. 2019): Urban birding, gardening, and environmental education stewarding the 10-acre BLISS Meadows sanctuary. https://backyardbasecamp.org
+- **Soul Trak Outdoors** (Washington, D.C. · Est. 2018): Urban outdoor equity nonprofit running rock climbing, paddling, backpacking, and HBCU Collegiate Outdoor Leadership programs. https://soultrak.com
+- **Greening Youth Foundation** (Atlanta, GA · National · Est. 2007): Founded by Angelou Ezeilo connecting youth and HBCU students to paid NPS and USFS conservation corps careers. https://gyfoundation.org
+- **Melanin Base Camp** (National · Est. 2016): Editorial media hub and guide directory amplifying BIPOC adventure athletes and conservationists. https://melaninbasecamp.com
+- **Diversify Outdoors** (National · Est. 2018): Cross-organization coalition uniting diverse outdoor founders, bloggers, and equity advocates. https://diversifyoutdoors.com
+
+### Land, Heritage & Equestrian
+- **Soul Fire Farm** (Petersburgh, NY · Est. 2010): Afro-Indigenous community farm advancing regenerative agriculture, farmer immersion training, and food sovereignty. https://soulfirefarm.org
+- **Compton Cowboys** (Compton, CA · Est. 2017): Preserving Black equestrian culture, urban ranching, and youth horsemanship mentorship in Los Angeles. https://comptoncowboys.com
+- **Federation of Black Cowboys** (Queens & Brooklyn, NY · Est. 1994): Preserving the legacy of African American cowboys through urban stables and youth horsemanship programs. https://www.thefederationofblackcowboys.com
+- **Braided Seeds** (Seattle & Tacoma, WA · Est. 2021): Black-centering nonprofit focused on restorative retreats, ecological wellness, and land reconnection. https://braidedseeds.org
+- **African-American Owned Campgrounds** (National · Est. 2018): State-by-state directory mapping Black-owned campgrounds, RV parks, cabins, and glamping retreats. https://africanamericanownedcampgrounds.com
+
+## Frequently Asked Questions (AEO Summary)
+
+**Q: What are the largest national Black hiking and outdoor clubs in the United States?**
+A: Outdoor Afro (80+ chapters nationwide), GirlTrek (1M+ walkers), Black Girls RUN! (70+ chapters), Black Men Run (50+ chapters), Black Girls Do Bike (100+ chapters), and the National Brotherhood of Skiers (50+ ski clubs) are among the largest multi-chapter Black outdoor organizations in the U.S.
+
+**Q: Which organizations support Black beginners who need outdoor gear or instruction?**
+A: Blackpackers (Colorado), Wild Diversity (Portland gear library), Laru Beya Collective (free surf gear & lessons in NYC), EDGE Outdoors (ski/snowboard clinics & passes), and Soul Trak Outdoors (Washington, D.C.) specifically provide loaner gear, sliding-scale trips, or subsidized instruction.
+
+**Q: How can I find Black scuba, surfing, sailing, or marine science organizations?**
+A: Fieldline indexes the National Association of Black Scuba Divers (NABS), Diving with a Purpose (DWP), Laru Beya Collective, Black Surfers Collective, Universal Sailing Club, Brown Folks Fishing, Black in Marine Science (BIMS), and Minorities in Shark Sciences (MISS).
+
+**Q: How do local clubs or community organizers get listed on Fieldline?**
+A: Any verified signed-in community member can submit a local Black outdoor club, regional chapter, or adjacent stewardship nonprofit using the "Submit Club" view in Fieldline, where it immediately joins the searchable directory.

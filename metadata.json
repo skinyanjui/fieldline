@@ -1,0 +1,6 @@
+{
+  "name": "Fieldline",
+  "description": "Directory and community social network for Black outdoor clubs, adventure collectives, and land stewardship organizations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

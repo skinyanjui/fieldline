@@ -1,0 +1,665 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Global Hardened Primitives
+    // -------------------------------------------------------------------------
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isVerifiedOwner(userId) {
+      return isVerifiedUser() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isVerifiedUser() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'samuel.kinyanjui.sk@gmail.com'
+      );
+    }
+
+    function isValidDiscipline(val) {
+      return val in [
+        'Hiking & Camping',
+        'Climbing & Snow',
+        'Water, Surf & Dive',
+        'Cycling & Running',
+        'Birding & Conservation',
+        'Land & Heritage'
+      ];
+    }
+
+    function isValidOrgType(val) {
+      return val in [
+        'Outdoor Club',
+        'Nonprofit & Advocacy',
+        'Coalition & Media',
+        'Land & Stewardship'
+      ];
+    }
+
+    function isValidRegion(val) {
+      return val in [
+        'National',
+        'West',
+        'Southwest',
+        'Midwest',
+        'South',
+        'Northeast',
+        'International'
+      ];
+    }
+
+    function isValidPostCategory(val) {
+      return val in [
+        'Trail Report',
+        'Trip Recap',
+        'Carpool & Gear',
+        'Conservation',
+        'Introduction'
+      ];
+    }
+
+    function isValidDifficulty(val) {
+      return val in [
+        'Beginner Friendly',
+        'Moderate',
+        'Challenging',
+        'All Levels'
+      ];
+    }
+
+    function isValidOfferType(val) {
+      return val in ['carpool', 'gear'];
+    }
+
+    function isValidClaimStatus(val) {
+      return val in ['pending', 'approved', 'rejected'];
+    }
+
+    // -------------------------------------------------------------------------
+    // Entity Validation Blueprints (Anti-Update-Gap)
+    // -------------------------------------------------------------------------
+    function isValidUserAccount(data) {
+      return data.keys().hasAll(['uid', 'email', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['uid', 'email', 'createdAt', 'updatedAt'])
+        && isValidId(data.uid)
+        && data.uid == request.auth.uid
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 254
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidMemberProfile(data) {
+      return data.keys().hasAll([
+          'uid', 'displayName', 'homeRegion', 'bio', 'disciplines', 'photoURL',
+          'visibility', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'displayName', 'homeRegion', 'bio', 'disciplines', 'photoURL',
+          'visibility', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.uid)
+        && data.uid == request.auth.uid
+        && data.displayName is string && data.displayName.size() >= 2 && data.displayName.size() <= 80
+        && data.homeRegion is string && data.homeRegion.size() >= 2 && data.homeRegion.size() <= 60
+        && data.bio is string && data.bio.size() <= 280
+        && data.disciplines is list && data.disciplines.size() <= 6
+        && (data.disciplines.size() == 0 || data.disciplines[0] is string)
+        && data.photoURL is string && data.photoURL.size() <= 500
+        && data.visibility == 'public'
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidOrganization(data) {
+      return data.keys().hasAll([
+          'name', 'discipline', 'orgType', 'region', 'location', 'founded',
+          'chapterCount', 'website', 'instagram', 'summary', 'authorId',
+          'authorName', 'visibility', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'name', 'discipline', 'orgType', 'region', 'location', 'founded',
+          'chapterCount', 'website', 'instagram', 'summary', 'authorId',
+          'authorName', 'visibility', 'createdAt', 'updatedAt'
+        ])
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 100
+        && isValidDiscipline(data.discipline)
+        && isValidOrgType(data.orgType)
+        && isValidRegion(data.region)
+        && data.location is string && data.location.size() >= 2 && data.location.size() <= 80
+        && data.founded is string && data.founded.size() >= 4 && data.founded.size() <= 20
+        && data.chapterCount is string && data.chapterCount.size() <= 40
+        && data.website is string && data.website.size() <= 240
+        && data.instagram is string && data.instagram.size() <= 80
+        && data.summary is string && data.summary.size() >= 20 && data.summary.size() <= 600
+        && isValidId(data.authorId)
+        && data.authorName is string && data.authorName.size() >= 2 && data.authorName.size() <= 80
+        && data.visibility == 'public'
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidClubMembership(data) {
+      return data.keys().hasAll(['userId', 'userName', 'orgId', 'orgName', 'visibility', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'userName', 'orgId', 'orgName', 'visibility', 'createdAt'])
+        && isValidId(data.userId)
+        && data.userId == request.auth.uid
+        && data.userName is string && data.userName.size() >= 2 && data.userName.size() <= 80
+        && isValidId(data.orgId)
+        && data.orgName is string && data.orgName.size() >= 2 && data.orgName.size() <= 100
+        && data.visibility == 'public'
+        && data.createdAt is timestamp;
+    }
+
+    function isValidFieldPost(data) {
+      return data.keys().hasAll([
+          'authorId', 'authorName', 'authorRegion', 'orgId', 'orgName',
+          'category', 'title', 'body', 'location', 'visibility',
+          'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'authorId', 'authorName', 'authorRegion', 'orgId', 'orgName',
+          'category', 'title', 'body', 'location', 'visibility',
+          'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.authorId)
+        && data.authorId == request.auth.uid
+        && data.authorName is string && data.authorName.size() >= 2 && data.authorName.size() <= 80
+        && data.authorRegion is string && data.authorRegion.size() >= 2 && data.authorRegion.size() <= 60
+        && data.orgId is string && data.orgId.size() <= 128
+        && data.orgName is string && data.orgName.size() <= 100
+        && isValidPostCategory(data.category)
+        && data.title is string && data.title.size() >= 4 && data.title.size() <= 120
+        && data.body is string && data.body.size() >= 10 && data.body.size() <= 1500
+        && data.location is string && data.location.size() <= 80
+        && data.visibility == 'public'
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidPostLike(data) {
+      return data.keys().hasAll(['userId', 'postId', 'visibility', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'postId', 'visibility', 'createdAt'])
+        && isValidId(data.userId)
+        && data.userId == request.auth.uid
+        && isValidId(data.postId)
+        && data.visibility == 'public'
+        && data.createdAt is timestamp;
+    }
+
+    function isValidPostComment(data) {
+      return data.keys().hasAll(['postId', 'authorId', 'authorName', 'body', 'visibility', 'createdAt'])
+        && data.keys().hasOnly(['postId', 'authorId', 'authorName', 'body', 'visibility', 'createdAt'])
+        && isValidId(data.postId)
+        && isValidId(data.authorId)
+        && data.authorId == request.auth.uid
+        && data.authorName is string && data.authorName.size() >= 2 && data.authorName.size() <= 80
+        && data.body is string && data.body.size() >= 2 && data.body.size() <= 600
+        && data.visibility == 'public'
+        && data.createdAt is timestamp;
+    }
+
+    function isValidOuting(data) {
+      return data.keys().hasAll([
+          'hostId', 'hostName', 'orgId', 'orgName', 'title', 'discipline',
+          'dateLabel', 'location', 'region', 'difficulty', 'maxSpots',
+          'description', 'visibility', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'hostId', 'hostName', 'orgId', 'orgName', 'title', 'discipline',
+          'dateLabel', 'location', 'region', 'difficulty', 'maxSpots',
+          'description', 'visibility', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.hostId)
+        && data.hostId == request.auth.uid
+        && data.hostName is string && data.hostName.size() >= 2 && data.hostName.size() <= 80
+        && data.orgId is string && data.orgId.size() <= 128
+        && data.orgName is string && data.orgName.size() >= 2 && data.orgName.size() <= 100
+        && data.title is string && data.title.size() >= 4 && data.title.size() <= 120
+        && isValidDiscipline(data.discipline)
+        && data.dateLabel is string && data.dateLabel.size() >= 4 && data.dateLabel.size() <= 60
+        && data.location is string && data.location.size() >= 2 && data.location.size() <= 100
+        && isValidRegion(data.region)
+        && isValidDifficulty(data.difficulty)
+        && data.maxSpots is number && data.maxSpots >= 2 && data.maxSpots <= 500
+        && data.description is string && data.description.size() >= 10 && data.description.size() <= 800
+        && data.visibility == 'public'
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidOutingRsvp(data) {
+      return data.keys().hasAll(['userId', 'userName', 'outingId', 'status', 'visibility', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'userName', 'outingId', 'status', 'visibility', 'createdAt'])
+        && isValidId(data.userId)
+        && data.userId == request.auth.uid
+        && data.userName is string && data.userName.size() >= 2 && data.userName.size() <= 80
+        && isValidId(data.outingId)
+        && data.status == 'going'
+        && data.visibility == 'public'
+        && data.createdAt is timestamp;
+    }
+
+    function isValidMemberFollow(data) {
+      return data.keys().hasAll([
+          'followerId', 'followerName', 'targetUserId', 'targetUserName',
+          'visibility', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'followerId', 'followerName', 'targetUserId', 'targetUserName',
+          'visibility', 'createdAt'
+        ])
+        && isValidId(data.followerId)
+        && data.followerId == request.auth.uid
+        && data.followerName is string && data.followerName.size() >= 2 && data.followerName.size() <= 80
+        && isValidId(data.targetUserId)
+        && data.targetUserId != request.auth.uid
+        && data.targetUserName is string && data.targetUserName.size() >= 2 && data.targetUserName.size() <= 80
+        && data.visibility == 'public'
+        && data.createdAt is timestamp;
+    }
+
+    function isValidClubBookmark(data) {
+      return data.keys().hasAll(['userId', 'orgId', 'orgName', 'createdAt'])
+        && data.keys().hasOnly(['userId', 'orgId', 'orgName', 'createdAt'])
+        && isValidId(data.userId)
+        && data.userId == request.auth.uid
+        && isValidId(data.orgId)
+        && data.orgName is string && data.orgName.size() >= 2 && data.orgName.size() <= 100
+        && data.createdAt is timestamp;
+    }
+
+    function isValidCarpoolOffer(data) {
+      return data.keys().hasAll([
+          'outingId', 'hostId', 'hostName', 'offerType', 'departurePoint',
+          'itemSummary', 'totalSlots', 'notes', 'visibility', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'outingId', 'hostId', 'hostName', 'offerType', 'departurePoint',
+          'itemSummary', 'totalSlots', 'notes', 'visibility', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.outingId)
+        && isValidId(data.hostId)
+        && data.hostId == request.auth.uid
+        && data.hostName is string && data.hostName.size() >= 2 && data.hostName.size() <= 80
+        && isValidOfferType(data.offerType)
+        && data.departurePoint is string && data.departurePoint.size() >= 2 && data.departurePoint.size() <= 100
+        && data.itemSummary is string && data.itemSummary.size() >= 2 && data.itemSummary.size() <= 100
+        && data.totalSlots is number && data.totalSlots >= 1 && data.totalSlots <= 12
+        && data.notes is string && data.notes.size() <= 300
+        && data.visibility == 'public'
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidCarpoolClaim(data) {
+      return data.keys().hasAll(['offerId', 'outingId', 'userId', 'userName', 'visibility', 'createdAt'])
+        && data.keys().hasOnly(['offerId', 'outingId', 'userId', 'userName', 'visibility', 'createdAt'])
+        && isValidId(data.offerId)
+        && isValidId(data.outingId)
+        && isValidId(data.userId)
+        && data.userId == request.auth.uid
+        && data.userName is string && data.userName.size() >= 2 && data.userName.size() <= 80
+        && data.visibility == 'public'
+        && data.createdAt is timestamp;
+    }
+
+    function isValidClubClaim(data) {
+      return data.keys().hasAll([
+          'orgId', 'orgName', 'requesterId', 'requesterName', 'roleTitle',
+          'proposedSummary', 'proposedWebsite', 'proposedChapterCount', 'notes',
+          'status', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'orgId', 'orgName', 'requesterId', 'requesterName', 'roleTitle',
+          'proposedSummary', 'proposedWebsite', 'proposedChapterCount', 'notes',
+          'status', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.orgId)
+        && data.orgName is string && data.orgName.size() >= 2 && data.orgName.size() <= 100
+        && isValidId(data.requesterId)
+        && data.requesterName is string && data.requesterName.size() >= 2 && data.requesterName.size() <= 80
+        && data.roleTitle is string && data.roleTitle.size() >= 2 && data.roleTitle.size() <= 80
+        && data.proposedSummary is string && data.proposedSummary.size() <= 600
+        && data.proposedWebsite is string && data.proposedWebsite.size() <= 240
+        && data.proposedChapterCount is string && data.proposedChapterCount.size() <= 40
+        && data.notes is string && data.notes.size() >= 10 && data.notes.size() <= 500
+        && isValidClaimStatus(data.status)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    // -------------------------------------------------------------------------
+    // Collection Rules
+    // -------------------------------------------------------------------------
+
+    // Startup connection check document
+    match /test/connection {
+      allow get: if true;
+      allow list, write: if false;
+    }
+
+    // Admin registry (read-only for owner)
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && isOwner(adminId);
+      allow list, write: if false;
+    }
+
+    // Private PII Account Records (strictly owner-isolated)
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false;
+      allow create: if isVerifiedOwner(userId)
+        && isValidId(userId)
+        && isValidUserAccount(incoming())
+        && incoming().uid == userId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedOwner(userId)
+        && isValidId(userId)
+        && isValidUserAccount(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['email', 'updatedAt']);
+      allow delete: if isVerifiedOwner(userId) && isValidId(userId);
+    }
+
+    // Public Community Member Profiles (No PII)
+    match /profiles/{userId} {
+      allow get: if isValidId(userId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedOwner(userId)
+        && isValidId(userId)
+        && isValidMemberProfile(incoming())
+        && incoming().uid == userId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedOwner(userId)
+        && isValidId(userId)
+        && isValidMemberProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'displayName', 'homeRegion', 'bio', 'disciplines', 'photoURL', 'updatedAt'
+        ]);
+      allow delete: if isVerifiedOwner(userId) && isValidId(userId);
+    }
+
+    // Community-Submitted Clubs & Adjacent Organizations
+    match /organizations/{orgId} {
+      allow get: if isValidId(orgId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(orgId)
+        && isValidOrganization(incoming())
+        && incoming().authorId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser()
+        && isValidId(orgId)
+        && isValidOrganization(incoming())
+        && (existing().authorId == request.auth.uid || isAdmin())
+        && incoming().authorId == existing().authorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'name', 'discipline', 'orgType', 'region', 'location', 'founded',
+          'chapterCount', 'website', 'instagram', 'summary', 'updatedAt'
+        ]);
+      allow delete: if isVerifiedUser()
+        && isValidId(orgId)
+        && (existing().authorId == request.auth.uid || isAdmin());
+    }
+
+    // Club Memberships / Follows (deterministic ID: userId_orgId)
+    match /memberships/{membershipId} {
+      allow get: if isValidId(membershipId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(membershipId)
+        && isValidClubMembership(incoming())
+        && membershipId == request.auth.uid + '_' + incoming().orgId
+        && incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if isVerifiedUser()
+        && isValidId(membershipId)
+        && existing().userId == request.auth.uid;
+    }
+
+    // Private Member Bookmarks (deterministic ID: userId_orgId)
+    match /bookmarks/{bookmarkId} {
+      allow get: if isValidId(bookmarkId) && isOwner(existing().userId);
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isVerifiedUser()
+        && isValidId(bookmarkId)
+        && isValidClubBookmark(incoming())
+        && bookmarkId == request.auth.uid + '_' + incoming().orgId
+        && incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if isVerifiedUser()
+        && isValidId(bookmarkId)
+        && existing().userId == request.auth.uid;
+    }
+
+    // Community Field Feed Posts
+    match /posts/{postId} {
+      allow get: if isValidId(postId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(postId)
+        && isValidFieldPost(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser()
+        && isValidId(postId)
+        && isValidFieldPost(incoming())
+        && existing().authorId == request.auth.uid
+        && incoming().authorId == existing().authorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'title', 'body', 'location', 'category', 'updatedAt'
+        ]);
+      allow delete: if isVerifiedUser()
+        && isValidId(postId)
+        && (existing().authorId == request.auth.uid || isAdmin());
+    }
+
+    // Post Likes Interaction Collection (deterministic ID: userId_postId)
+    match /postLikes/{likeId} {
+      allow get: if isValidId(likeId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(likeId)
+        && isValidPostLike(incoming())
+        && likeId == request.auth.uid + '_' + incoming().postId
+        && incoming().createdAt == request.time
+        && (
+          incoming().postId.matches('^seed-post-[0-9]+$') ||
+          exists(/databases/$(database)/documents/posts/$(incoming().postId))
+        );
+      allow update: if false;
+      allow delete: if isVerifiedUser()
+        && isValidId(likeId)
+        && existing().userId == request.auth.uid;
+    }
+
+    // Post Comments
+    match /postComments/{commentId} {
+      allow get: if isValidId(commentId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(commentId)
+        && isValidPostComment(incoming())
+        && incoming().createdAt == request.time
+        && (
+          incoming().postId.matches('^seed-post-[0-9]+$') ||
+          exists(/databases/$(database)/documents/posts/$(incoming().postId))
+        );
+      allow update: if false;
+      allow delete: if isVerifiedUser()
+        && isValidId(commentId)
+        && (existing().authorId == request.auth.uid || isAdmin());
+    }
+
+    // Community Outings
+    match /outings/{outingId} {
+      allow get: if isValidId(outingId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(outingId)
+        && isValidOuting(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser()
+        && isValidId(outingId)
+        && isValidOuting(incoming())
+        && existing().hostId == request.auth.uid
+        && incoming().hostId == existing().hostId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'title', 'dateLabel', 'location', 'difficulty', 'maxSpots', 'description', 'updatedAt'
+        ]);
+      allow delete: if isVerifiedUser()
+        && isValidId(outingId)
+        && (existing().hostId == request.auth.uid || isAdmin());
+    }
+
+    // Outing RSVPs (deterministic ID: userId_outingId)
+    match /rsvps/{rsvpId} {
+      allow get: if isValidId(rsvpId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(rsvpId)
+        && isValidOutingRsvp(incoming())
+        && rsvpId == request.auth.uid + '_' + incoming().outingId
+        && incoming().createdAt == request.time
+        && (
+          incoming().outingId.matches('^outing-[a-z0-9\\-]+$') ||
+          exists(/databases/$(database)/documents/outings/$(incoming().outingId))
+        );
+      allow update: if false;
+      allow delete: if isVerifiedUser()
+        && isValidId(rsvpId)
+        && existing().userId == request.auth.uid;
+    }
+
+    // Structured Carpool & Loaner Gear Offers
+    match /carpoolOffers/{offerId} {
+      allow get: if isValidId(offerId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(offerId)
+        && isValidCarpoolOffer(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          incoming().outingId.matches('^outing-[a-z0-9\\-]+$') ||
+          exists(/databases/$(database)/documents/outings/$(incoming().outingId))
+        );
+      allow update: if isVerifiedUser()
+        && isValidId(offerId)
+        && isValidCarpoolOffer(incoming())
+        && existing().hostId == request.auth.uid
+        && incoming().hostId == existing().hostId
+        && incoming().outingId == existing().outingId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'departurePoint', 'itemSummary', 'totalSlots', 'notes', 'updatedAt'
+        ]);
+      allow delete: if isVerifiedUser()
+        && isValidId(offerId)
+        && (existing().hostId == request.auth.uid || isAdmin());
+    }
+
+    // Carpool Seat & Loaner Gear Claims (deterministic ID: userId_offerId)
+    match /carpoolClaims/{claimId} {
+      allow get: if isValidId(claimId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(claimId)
+        && isValidCarpoolClaim(incoming())
+        && claimId == request.auth.uid + '_' + incoming().offerId
+        && incoming().createdAt == request.time
+        && exists(/databases/$(database)/documents/carpoolOffers/$(incoming().offerId));
+      allow update: if false;
+      allow delete: if isVerifiedUser()
+        && isValidId(claimId)
+        && (existing().userId == request.auth.uid || isAdmin());
+    }
+
+    // Chapter Leader Claim & Directory Update Requests
+    match /clubClaims/{claimId} {
+      allow get: if isValidId(claimId)
+        && (isOwner(existing().requesterId) || isAdmin());
+      allow list: if isSignedIn()
+        && (resource.data.requesterId == request.auth.uid || isAdmin());
+      allow create: if isVerifiedUser()
+        && isValidId(claimId)
+        && isValidClubClaim(incoming())
+        && incoming().requesterId == request.auth.uid
+        && incoming().status == 'pending'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin()
+        && isValidId(claimId)
+        && isValidClubClaim(incoming())
+        && incoming().requesterId == existing().requesterId
+        && incoming().orgId == existing().orgId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']);
+      allow delete: if isVerifiedUser()
+        && isValidId(claimId)
+        && ((existing().requesterId == request.auth.uid && existing().status == 'pending') || isAdmin());
+    }
+
+    // Member Social Follow Graph (deterministic ID: followerId_targetUserId)
+    match /follows/{followId} {
+      allow get: if isValidId(followId) && existing().visibility == 'public';
+      allow list: if resource.data.visibility == 'public';
+      allow create: if isVerifiedUser()
+        && isValidId(followId)
+        && isValidMemberFollow(incoming())
+        && followId == request.auth.uid + '_' + incoming().targetUserId
+        && incoming().createdAt == request.time
+        && exists(/databases/$(database)/documents/profiles/$(incoming().targetUserId));
+      allow update: if false;
+      allow delete: if isVerifiedUser()
+        && isValidId(followId)
+        && existing().followerId == request.auth.uid;
+    }
+  }
+}

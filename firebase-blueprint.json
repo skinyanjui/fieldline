@@ -1,0 +1,850 @@
+{
+  "entities": {
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Private user account record containing isolated PII.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 254
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "createdAt", "updatedAt"]
+    },
+    "MemberProfile": {
+      "title": "MemberProfile",
+      "description": "Public community member profile without PII.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "homeRegion": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "bio": {
+          "type": "string",
+          "maxLength": 280
+        },
+        "disciplines": {
+          "type": "array",
+          "description": "Up to 6 preferred outdoor disciplines"
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "homeRegion",
+        "bio",
+        "disciplines",
+        "photoURL",
+        "visibility",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Organization": {
+      "title": "Organization",
+      "description": "Community-submitted Black outdoor club or adjacent stewardship organization.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "discipline": {
+          "type": "string",
+          "enum": [
+            "Hiking & Camping",
+            "Climbing & Snow",
+            "Water, Surf & Dive",
+            "Cycling & Running",
+            "Birding & Conservation",
+            "Land & Heritage"
+          ]
+        },
+        "orgType": {
+          "type": "string",
+          "enum": [
+            "Outdoor Club",
+            "Nonprofit & Advocacy",
+            "Coalition & Media",
+            "Land & Stewardship"
+          ]
+        },
+        "region": {
+          "type": "string",
+          "enum": [
+            "National",
+            "West",
+            "Southwest",
+            "Midwest",
+            "South",
+            "Northeast",
+            "International"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "founded": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 20
+        },
+        "chapterCount": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "website": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "instagram": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 600
+        },
+        "authorId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "discipline",
+        "orgType",
+        "region",
+        "location",
+        "founded",
+        "chapterCount",
+        "website",
+        "instagram",
+        "summary",
+        "authorId",
+        "authorName",
+        "visibility",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ClubMembership": {
+      "title": "ClubMembership",
+      "description": "Tracks a member joining or following a directory organization.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "orgId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "orgName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "userName",
+        "orgId",
+        "orgName",
+        "visibility",
+        "createdAt"
+      ]
+    },
+    "FieldPost": {
+      "title": "FieldPost",
+      "description": "Community trail report, trip recap, carpool call, or field note.",
+      "type": "object",
+      "properties": {
+        "authorId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "authorRegion": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "orgId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "orgName": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "Trail Report",
+            "Trip Recap",
+            "Carpool & Gear",
+            "Conservation",
+            "Introduction"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 120
+        },
+        "body": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1500
+        },
+        "location": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "authorId",
+        "authorName",
+        "authorRegion",
+        "orgId",
+        "orgName",
+        "category",
+        "title",
+        "body",
+        "location",
+        "visibility",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PostLike": {
+      "title": "PostLike",
+      "description": "A member appreciation mark on a FieldPost.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "postId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "postId", "visibility", "createdAt"]
+    },
+    "PostComment": {
+      "title": "PostComment",
+      "description": "A reply on a FieldPost.",
+      "type": "object",
+      "properties": {
+        "postId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "body": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 600
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "postId",
+        "authorId",
+        "authorName",
+        "body",
+        "visibility",
+        "createdAt"
+      ]
+    },
+    "Outing": {
+      "title": "Outing",
+      "description": "Upcoming community hike, paddle, climb, ride, or campout.",
+      "type": "object",
+      "properties": {
+        "hostId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "hostName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "orgId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "orgName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "title": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 120
+        },
+        "discipline": {
+          "type": "string",
+          "enum": [
+            "Hiking & Camping",
+            "Climbing & Snow",
+            "Water, Surf & Dive",
+            "Cycling & Running",
+            "Birding & Conservation",
+            "Land & Heritage"
+          ]
+        },
+        "dateLabel": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 60
+        },
+        "location": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "region": {
+          "type": "string",
+          "enum": [
+            "National",
+            "West",
+            "Southwest",
+            "Midwest",
+            "South",
+            "Northeast",
+            "International"
+          ]
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["Beginner Friendly", "Moderate", "Challenging", "All Levels"]
+        },
+        "maxSpots": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 800
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "hostId",
+        "hostName",
+        "orgId",
+        "orgName",
+        "title",
+        "discipline",
+        "dateLabel",
+        "location",
+        "region",
+        "difficulty",
+        "maxSpots",
+        "description",
+        "visibility",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "OutingRsvp": {
+      "title": "OutingRsvp",
+      "description": "A member RSVP for a community outing.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "outingId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["going"]
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "userName",
+        "outingId",
+        "status",
+        "visibility",
+        "createdAt"
+      ]
+    },
+    "MemberFollow": {
+      "title": "MemberFollow",
+      "description": "Directed social follow relationship between two Fieldline members.",
+      "type": "object",
+      "properties": {
+        "followerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "followerName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "targetUserId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "targetUserName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "followerId",
+        "followerName",
+        "targetUserId",
+        "targetUserName",
+        "visibility",
+        "createdAt"
+      ]
+    },
+    "ClubBookmark": {
+      "title": "ClubBookmark",
+      "description": "Private member bookmark saving an organization to revisit later.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "orgId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "orgName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "orgId", "orgName", "createdAt"]
+    },
+    "CarpoolOffer": {
+      "title": "CarpoolOffer",
+      "description": "Structured carpool ride share or loaner gear offer attached to a community outing.",
+      "type": "object",
+      "properties": {
+        "outingId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "hostId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "hostName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "offerType": {
+          "type": "string",
+          "enum": ["carpool", "gear"]
+        },
+        "departurePoint": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "itemSummary": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "totalSlots": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "outingId",
+        "hostId",
+        "hostName",
+        "offerType",
+        "departurePoint",
+        "itemSummary",
+        "totalSlots",
+        "notes",
+        "visibility",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CarpoolClaim": {
+      "title": "CarpoolClaim",
+      "description": "Member claim on a carpool seat or loaner gear item.",
+      "type": "object",
+      "properties": {
+        "offerId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "outingId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["offerId", "outingId", "userId", "userName", "visibility", "createdAt"]
+    },
+    "ClubClaim": {
+      "title": "ClubClaim",
+      "description": "Chapter organizer request to claim or update a directory organization listing.",
+      "type": "object",
+      "properties": {
+        "orgId": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "orgName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "requesterId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "requesterName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "roleTitle": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "proposedSummary": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "proposedWebsite": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "proposedChapterCount": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "approved", "rejected"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "orgId",
+        "orgName",
+        "requesterId",
+        "requesterName",
+        "roleTitle",
+        "proposedSummary",
+        "proposedWebsite",
+        "proposedChapterCount",
+        "notes",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "Private user account documents containing email PII, accessible only by owner."
+    },
+    "/profiles/{userId}": {
+      "schema": { "$ref": "#/entities/MemberProfile" },
+      "description": "Public community member profiles without PII."
+    },
+    "/organizations/{orgId}": {
+      "schema": { "$ref": "#/entities/Organization" },
+      "description": "Community-submitted outdoor clubs and adjacent organizations."
+    },
+    "/memberships/{membershipId}": {
+      "schema": { "$ref": "#/entities/ClubMembership" },
+      "description": "Member-to-club joins and follows."
+    },
+    "/posts/{postId}": {
+      "schema": { "$ref": "#/entities/FieldPost" },
+      "description": "Community field notes, trail reports, and gear/carpool calls."
+    },
+    "/postLikes/{likeId}": {
+      "schema": { "$ref": "#/entities/PostLike" },
+      "description": "Interaction records tracking likes on field posts."
+    },
+    "/postComments/{commentId}": {
+      "schema": { "$ref": "#/entities/PostComment" },
+      "description": "Replies on field posts."
+    },
+    "/outings/{outingId}": {
+      "schema": { "$ref": "#/entities/Outing" },
+      "description": "Upcoming community outings hosted by members."
+    },
+    "/rsvps/{rsvpId}": {
+      "schema": { "$ref": "#/entities/OutingRsvp" },
+      "description": "Member RSVPs to community outings."
+    },
+    "/follows/{followId}": {
+      "schema": { "$ref": "#/entities/MemberFollow" },
+      "description": "Directed follow links between Fieldline community members."
+    },
+    "/bookmarks/{bookmarkId}": {
+      "schema": { "$ref": "#/entities/ClubBookmark" },
+      "description": "Private per-user saved organization bookmarks."
+    },
+    "/carpoolOffers/{offerId}": {
+      "schema": { "$ref": "#/entities/CarpoolOffer" },
+      "description": "Structured carpool seat and loaner gear offers attached to outings."
+    },
+    "/carpoolClaims/{claimId}": {
+      "schema": { "$ref": "#/entities/CarpoolClaim" },
+      "description": "Member claims on carpool seats or loaner gear slots."
+    },
+    "/clubClaims/{claimId}": {
+      "schema": { "$ref": "#/entities/ClubClaim" },
+      "description": "Chapter leader requests to claim or update directory listings, reviewed by admin."
+    }
+  }
+}

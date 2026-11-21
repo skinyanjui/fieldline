@@ -1,0 +1,101 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-heading: 'Fraunces', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.85);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.35);
+}
+
+/* Archival Warm Stone + Forest Ink Editorial Theme */
+:root {
+  --background: #F8F6F1;
+  --foreground: #1A1816;
+  --card: #FFFFFF;
+  --card-foreground: #1A1816;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1816;
+  --primary: #1B4332;
+  --primary-foreground: #F8F6F1;
+  --secondary: #EFECE5;
+  --secondary-foreground: #26231F;
+  --muted: #EFECE5;
+  --muted-foreground: #5C574F;
+  --accent: #E6E1D6;
+  --accent-foreground: #1A1816;
+  --destructive: #991B1B;
+  --destructive-foreground: #FFFFFF;
+  --border: #DFD9CE;
+  --input: #D5CFC3;
+  --ring: #1B4332;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: #141311;
+  --foreground: #F2EFE9;
+  --card: #1C1A17;
+  --card-foreground: #F2EFE9;
+  --popover: #1C1A17;
+  --popover-foreground: #F2EFE9;
+  --primary: #40916C;
+  --primary-foreground: #0D1611;
+  --secondary: #26231F;
+  --secondary-foreground: #F2EFE9;
+  --muted: #26231F;
+  --muted-foreground: #A69F95;
+  --accent: #2D2A25;
+  --accent-foreground: #F2EFE9;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #2F2B26;
+  --input: #3B3630;
+  --ring: #52B788;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans antialiased scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground selection:bg-primary/15 selection:text-foreground;
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+}
